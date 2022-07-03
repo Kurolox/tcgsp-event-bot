@@ -1,28 +1,37 @@
-import discord
-import os
 import sqlalchemy
+import discord
+
+from discord.ext import commands
+from pathlib import Path
+from os import getenv
 from dotenv import load_dotenv
+
+from schemas.base import Base
 
 # Use environment variables from .env file if available
 load_dotenv()
 
 # Initialize the database connection
-database = sqlalchemy.create_engine("postgresql://" + os.getenv("EVENTBOT_DB_ENGINE"))
+database = sqlalchemy.create_engine(getenv("EVENTBOT_DB_ENGINE"))
+Base.metadata.create_all(database, checkfirst=True)
+session = sqlalchemy.orm.sessionmaker(bind=database)()
 
-# Initialize the Discord bot client
-client = discord.Client()
+# Initialize the Discord bot client, defining all needed intents and import all defined cogs
+# https://docs.pycord.dev/en/master/intents.html
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+intents.presences = True
 
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+for cog in [node for node in (Path(__file__).resolve().parent / "cogs").iterdir() if node.is_file()]:
+        bot.load_extension(f"cogs.{cog.stem}")
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+@bot.command()
+async def command(ctx):
+        print("commanded")
 
 # Start the Discord bot
-client.run(os.getenv("EVENTBOT_BOT_TOKEN"))
+print("Bot initialization complete. Deploying bot...")
+bot.run(getenv("EVENTBOT_BOT_TOKEN"))
