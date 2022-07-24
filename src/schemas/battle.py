@@ -7,6 +7,7 @@ class Battle(BaseModel):
 
     attacker = ForeignKeyField(Tamer)
     defender = ForeignKeyField(Tamer)
+    wager = IntegerField()
     timestamp = DateTimeField(default=datetime.now())
     winner = ForeignKeyField(Tamer, null=True)
     cancelled = BooleanField(default=False)

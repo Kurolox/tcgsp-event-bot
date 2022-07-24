@@ -1,16 +1,30 @@
 import discord
-from discord import Option, SlashCommandOptionType
+from discord import Interaction, Option, SlashCommandOptionType
 from discord.ext import commands
-from controllers import tamer
+from controllers import battle, tamer
 
 class ChallengeView(discord.ui.View):
+    def __init__(self, attacker, defender, bet):
+        self.attacker = attacker
+        self.defender = defender
+        self.bet = bet
+        super().__init__()
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        return interaction.user == self.defender
+
     @discord.ui.button(label="Aceptar", style=discord.ButtonStyle.green) 
-    async def accept_challenge(self, button, interaction):
-        await interaction.response.send_message("You clicked the button!") # Send a message when the button is clicked
+    async def accept_challenge(self, _, interaction):
+        await interaction.response.send_message(f"<@{self.defender.id}> ha aceptado el reto de <@{self.attacker.id}> por {self.bet} lo que sean!")
+        battle.begin(self.attacker, self.defender, self.bet)
 
     @discord.ui.button(label="Rechazar", style=discord.ButtonStyle.red) 
-    async def decline_challenge(self, button, interaction):
-        await interaction.response.send_message("You clicked the button!") # Send a message when the button is clicked
+    async def decline_challenge(self, _, interaction):
+        await interaction.response.send_message(f"""<@{self.defender.id}> ha rechazado el reto de <@{self.attacker.id}>!
+        
+        Ambos mensajes se borraran en 30 segundos.""", delete_after=30)
+        await interaction.message.delete(delay=30)
+
 
 class Battle(commands.Cog):
     def __init__(self, bot):
@@ -48,7 +62,7 @@ class Battle(commands.Cog):
         # the defender tamer's approval of the challenge
         await ctx.respond(f"""<@{defender.id}>, has sido retado por <@{ctx.user.id}> poniendo {bet} ALGO en linea! Reacciona a este mensaje para confirmar o declinar el reto.
         
-        Si el reto no es confirmado tras 10 minutos, este sera rechazado automaticamente.""", delete_after=600, view=ChallengeView())
+        Si el reto no es confirmado tras 10 minutos, este sera rechazado automaticamente.""", delete_after=600, view=ChallengeView(ctx.user, defender, bet))
 
 
 def setup(bot):

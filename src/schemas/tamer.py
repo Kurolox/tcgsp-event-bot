@@ -1,3 +1,4 @@
+from tokenize import String
 from schemas.base import BaseModel
 from peewee import *
 
@@ -8,5 +9,6 @@ class Tamer(BaseModel):
     # Peewee doesn't seem to like non-incrementing primary keys, so the discord ID won't be used
     # as a primary key.
     discord_id = BigIntegerField(unique=True)
+    name = TextField()
     currency = IntegerField(default=INITIAL_CURRENCY_AMOUNT)
     in_battle = BooleanField(default=False)
