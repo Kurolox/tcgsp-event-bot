@@ -18,19 +18,11 @@ session = sqlalchemy.orm.sessionmaker(bind=database)()
 
 # Initialize the Discord bot client, defining all needed intents and import all defined cogs
 # https://docs.pycord.dev/en/master/intents.html
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
-intents.presences = True
+bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), guild_ids=[992765224459452428])
 
-bot = commands.Bot(command_prefix="!", intents=intents)
-
+# Load all the defined cogs
 for cog in [node for node in (Path(__file__).resolve().parent / "cogs").iterdir() if node.is_file()]:
         bot.load_extension(f"cogs.{cog.stem}")
-
-@bot.command()
-async def command(ctx):
-        print("commanded")
 
 # Start the Discord bot
 print("Bot initialization complete. Deploying bot...")

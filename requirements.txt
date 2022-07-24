@@ -10,7 +10,7 @@ imageio-ffmpeg==0.4.7
 multidict==6.0.2
 numpy==1.23.0
 psycopg2==2.9.3
-py-cord==2.0.0rc1
+py-cord==2.0.0
 python-dotenv==0.20.0
 SQLAlchemy==1.4.39
 typing_extensions==4.3.0
