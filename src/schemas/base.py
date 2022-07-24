@@ -1,10 +1,11 @@
+from os import getenv
 from dotenv import load_dotenv
 import peewee
 
 
 load_dotenv()
 
-engine = peewee.PostgresqlDatabase("postgresql://tcgsp:1234@localhost:5455/event1")
+engine = peewee.PostgresqlDatabase(getenv("EVENTBOT_DB_ENGINE"))
 
 class BaseModel(peewee.Model):
     class Meta:
