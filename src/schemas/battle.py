@@ -1,10 +1,13 @@
-from sqlalchemy import Column, Integer, Sequence, ForeignKey
-from schemas.base import Base
+from datetime import datetime
+from schemas.base import BaseModel
+from peewee import *
+from schemas.tamer import Tamer
 
+class Battle(BaseModel):
 
-class Battle(Base):
-    __tablename__ = "battles"
+    attacker = ForeignKeyField(Tamer)
+    defender = ForeignKeyField(Tamer)
+    timestamp = DateTimeField(default=datetime.now())
+    winner = ForeignKeyField(Tamer, null=True)
+    cancelled = BooleanField(default=False)
 
-    id = Column(Integer, Sequence("battle_id_sequence"), primary_key = True)
-    tamer_1 = Column(Integer, ForeignKey("tamers.id"), nullable=False)
-    tamer_2 = Column(Integer, ForeignKey("tamers.id"), nullable=False)

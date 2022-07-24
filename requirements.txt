@@ -9,9 +9,9 @@ idna==3.3
 imageio-ffmpeg==0.4.7
 multidict==6.0.2
 numpy==1.23.0
+peewee==3.15.1
 psycopg2==2.9.3
 py-cord==2.0.0
 python-dotenv==0.20.0
-SQLAlchemy==1.4.39
 typing_extensions==4.3.0
 yarl==1.7.2
